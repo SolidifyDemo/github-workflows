@@ -62,7 +62,7 @@ jobs:
         dotnet nuget add source "https://api.nuget.org/v3/index.json" --name "nuget.org" || true
         
         # Add release feed if URL is provided
-        if [ -n "${{ vars.ACME_RELEASE_URL }}" ]; then
+        if [ -n "${{ vars.ACMERELEASENUGETFEED }}" ]; then
           echo "Adding ${{ inputs.release-feed-name }} feed..."
           dotnet nuget add source "${{ vars.ACME_RELEASE_URL }}" \
             --name "${{ inputs.release-feed-name }}" \
@@ -72,7 +72,7 @@ jobs:
         fi
         
         # Add prerelease feed if URL is provided
-        if [ -n "${{ vars.ACME_PRERELEASE_URL }}" ]; then
+        if [ -n "${{ vars.ACMEPRERELEASENUGETFEED }}" ]; then
           echo "Adding ${{ inputs.prerelease-feed-name }} feed..."
           dotnet nuget add source "${{ vars.ACME_PRERELEASE_URL }}" \
             --name "${{ inputs.prerelease-feed-name }}" \
