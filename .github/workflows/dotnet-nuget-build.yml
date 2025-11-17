@@ -23,6 +23,11 @@ on:
         required: false
         type: boolean
         default: false
+      submit-dependencies:
+        description: 'Whether to submit dependencies to GitHub Dependency Graph'
+        required: false
+        type: boolean
+        default: true
       release-feed-name:
         description: 'Name of the release NuGet feed'
         required: false
@@ -87,6 +92,11 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
+
+    - name: Submit Dependency Snapshot
+      if: ${{ inputs.submit-dependencies }}
+      uses: actions/dependency-review-action/dependency-submission@v4
+    
     
     - name: Build
       run: dotnet build --no-restore --configuration ${{ inputs.configuration }}
