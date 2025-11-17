@@ -64,20 +64,20 @@ jobs:
         # Add release feed if URL is provided
         if [ -n "${{ vars.ACMERELEASENUGETFEED }}" ]; then
           echo "Adding ${{ inputs.release-feed-name }} feed..."
-          dotnet nuget add source "${{ vars.ACME_RELEASE_URL }}" \
+          dotnet nuget add source "${{ vars.ACMERELEASENUGETFEED }}" \
             --name "${{ inputs.release-feed-name }}" \
             --username "${{ inputs.nuget-username }}" \
-            --password "${{ secrets.ADO_PAT }}" \
+            --password "${{ secrets.TEST_ADO_PAT }}" \
             --store-password-in-clear-text || echo "Source already exists or failed to add"
         fi
         
         # Add prerelease feed if URL is provided
         if [ -n "${{ vars.ACMEPRERELEASENUGETFEED }}" ]; then
           echo "Adding ${{ inputs.prerelease-feed-name }} feed..."
-          dotnet nuget add source "${{ vars.ACME_PRERELEASE_URL }}" \
+          dotnet nuget add source "${{ vars.ACMEPRERELEASENUGETFEED }}" \
             --name "${{ inputs.prerelease-feed-name }}" \
             --username "${{ inputs.nuget-username }}" \
-            --password "${{ secrets.ADO_PAT }}" \
+            --password "${{ secrets.TEST_ADO_PAT }}" \
             --store-password-in-clear-text || echo "Source already exists or failed to add"
         fi
         
