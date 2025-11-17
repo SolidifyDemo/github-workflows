@@ -7,22 +7,7 @@ on:
         description: 'The .NET SDK version to use'
         required: false
         type: string
-        default: '9.0.x'
-      configuration:
-        description: 'Build configuration (Debug/Release)'
-        required: false
-        type: string
-        default: 'Release'
-      run-tests:
-        description: 'Whether to run tests'
-        required: false
-        type: boolean
-        default: false
-      run-application:
-        description: 'Whether to run the application after build'
-        required: false
-        type: boolean
-        default: false
+        default: '9.0.x'     
       release-feed-name:
         description: 'Name of the release NuGet feed'
         required: false
@@ -84,17 +69,4 @@ jobs:
         # List configured sources
         echo "Configured NuGet sources:"
         dotnet nuget list source
-    
-    - name: Restore dependencies
-      run: dotnet restore
-    
-    - name: Build
-      run: dotnet build --no-restore --configuration ${{ inputs.configuration }}
-    
-    - name: Test
-      if: ${{ inputs.run-tests }}
-      run: dotnet test --no-build --configuration ${{ inputs.configuration }} --verbosity normal
-    
-    - name: Run application
-      if: ${{ inputs.run-application }}
-      run: dotnet run --no-build --configuration ${{ inputs.configuration }}
+
