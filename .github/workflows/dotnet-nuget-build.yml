@@ -70,3 +70,16 @@ jobs:
         echo "Configured NuGet sources:"
         dotnet nuget list source
 
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --no-restore --configuration ${{ inputs.configuration }}
+    
+    - name: Test
+      if: ${{ inputs.run-tests }}
+      run: dotnet test --no-build --configuration ${{ inputs.configuration }} --verbosity normal
+    
+    - name: Run application
+      if: ${{ inputs.run-application }}
+      run: dotnet run --no-build --configuration ${{ inputs.configuration }}
