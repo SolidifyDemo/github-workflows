@@ -1,0 +1,100 @@
+name: .NET Build with NuGet Configuration
+
+on:
+  workflow_call:
+    inputs:
+      dotnet-version:
+        description: 'The .NET SDK version to use'
+        required: false
+        type: string
+        default: '9.0.x'
+      configuration:
+        description: 'Build configuration (Debug/Release)'
+        required: false
+        type: string
+        default: 'Release'
+      run-tests:
+        description: 'Whether to run tests'
+        required: false
+        type: boolean
+        default: false
+      run-application:
+        description: 'Whether to run the application after build'
+        required: false
+        type: boolean
+        default: false
+      release-feed-name:
+        description: 'Name of the release NuGet feed'
+        required: false
+        type: string
+        default: 'ACME-Release'
+      prerelease-feed-name:
+        description: 'Name of the prerelease NuGet feed'
+        required: false
+        type: string
+        default: 'ACME-PreRelease'
+      nuget-username:
+        description: 'Username for NuGet authentication'
+        required: false
+        type: string
+        default: 'az'
+    secrets:
+      ADO_PAT:
+        description: 'Azure DevOps Personal Access Token for NuGet feeds'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+    
+    - name: Add NuGet sources
+      run: |
+        # Add nuget.org as the base source
+        dotnet nuget add source "https://api.nuget.org/v3/index.json" --name "nuget.org" || true
+        
+        # Add release feed if URL is provided
+        if [ -n "${{ vars.ACME_RELEASE_URL }}" ]; then
+          echo "Adding ${{ inputs.release-feed-name }} feed..."
+          dotnet nuget add source "${{ vars.ACME_RELEASE_URL }}" \
+            --name "${{ inputs.release-feed-name }}" \
+            --username "${{ inputs.nuget-username }}" \
+            --password "${{ secrets.ADO_PAT }}" \
+            --store-password-in-clear-text || echo "Source already exists or failed to add"
+        fi
+        
+        # Add prerelease feed if URL is provided
+        if [ -n "${{ vars.ACME_PRERELEASE_URL }}" ]; then
+          echo "Adding ${{ inputs.prerelease-feed-name }} feed..."
+          dotnet nuget add source "${{ vars.ACME_PRERELEASE_URL }}" \
+            --name "${{ inputs.prerelease-feed-name }}" \
+            --username "${{ inputs.nuget-username }}" \
+            --password "${{ secrets.ADO_PAT }}" \
+            --store-password-in-clear-text || echo "Source already exists or failed to add"
+        fi
+        
+        # List configured sources
+        echo "Configured NuGet sources:"
+        dotnet nuget list source
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --no-restore --configuration ${{ inputs.configuration }}
+    
+    - name: Test
+      if: ${{ inputs.run-tests }}
+      run: dotnet test --no-build --configuration ${{ inputs.configuration }} --verbosity normal
+    
+    - name: Run application
+      if: ${{ inputs.run-application }}
+      run: dotnet run --no-build --configuration ${{ inputs.configuration }}
