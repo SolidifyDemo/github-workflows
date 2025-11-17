@@ -95,8 +95,7 @@ jobs:
 
     - name: Submit Dependency Snapshot
       if: ${{ inputs.submit-dependencies }}
-      uses: actions/dependency-review-action/dependency-submission@v4
-    
+      uses: actions/dependency-review-action@v4    
     
     - name: Build
       run: dotnet build --no-restore --configuration ${{ inputs.configuration }}
