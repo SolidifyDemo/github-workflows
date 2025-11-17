@@ -7,7 +7,22 @@ on:
         description: 'The .NET SDK version to use'
         required: false
         type: string
-        default: '9.0.x'     
+        default: '9.0.x'
+      configuration:
+        description: 'Build configuration (Debug/Release)'
+        required: false
+        type: string
+        default: 'Release'
+      run-tests:
+        description: 'Whether to run tests'
+        required: false
+        type: boolean
+        default: false
+      run-application:
+        description: 'Whether to run the application after build'
+        required: false
+        type: boolean
+        default: false
       release-feed-name:
         description: 'Name of the release NuGet feed'
         required: false
