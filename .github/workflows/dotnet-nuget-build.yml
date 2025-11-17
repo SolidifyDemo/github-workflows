@@ -67,7 +67,7 @@ jobs:
           dotnet nuget add source "${{ vars.ACMERELEASENUGETFEED }}" \
             --name "${{ inputs.release-feed-name }}" \
             --username "${{ inputs.nuget-username }}" \
-            --password "${{ secrets.TEST_ADO_PAT }}" \
+            --password "${{ secrets.ADO_PAT }}" \
             --store-password-in-clear-text || echo "Source already exists or failed to add"
         fi
         
@@ -77,7 +77,7 @@ jobs:
           dotnet nuget add source "${{ vars.ACMEPRERELEASENUGETFEED }}" \
             --name "${{ inputs.prerelease-feed-name }}" \
             --username "${{ inputs.nuget-username }}" \
-            --password "${{ secrets.TEST_ADO_PAT }}" \
+            --password "${{ secrets.ADO_PAT }}" \
             --store-password-in-clear-text || echo "Source already exists or failed to add"
         fi
         
